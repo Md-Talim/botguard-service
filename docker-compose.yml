@@ -1,0 +1,35 @@
+services:
+    postgres:
+        image: postgres:16
+        container_name: botguard-postgres
+        environment:
+            POSTGRES_DB: botguard
+            POSTGRES_USER: botguard
+            POSTGRES_PASSWORD: botguard
+        ports:
+            - "5432:5432"
+        volumes:
+            - botguard_pg_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U botguard -d botguard"]
+            interval: 5s
+            timeout: 3s
+            retries: 10
+
+    redis:
+        image: redis:7
+        container_name: botguard-redis
+        ports:
+            - "6379:6379"
+        volumes:
+            - botguard_redis_data:/data
+        command: ["redis-server", "--apendonly", "yes"]
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 5s
+            timeout: 3s
+            retries: 10
+
+volumes:
+    botguard_pg_data:
+    botguard_redis_data:
