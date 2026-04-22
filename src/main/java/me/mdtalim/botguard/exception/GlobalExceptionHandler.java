@@ -26,6 +26,13 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(DepthLimitExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleDepth(
+        DepthLimitExceededException ex
+    ) {
+        return buildError(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(
         MethodArgumentNotValidException ex

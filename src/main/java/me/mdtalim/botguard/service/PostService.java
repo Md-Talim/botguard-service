@@ -10,6 +10,7 @@ import me.mdtalim.botguard.dto.response.PostResponse;
 import me.mdtalim.botguard.entity.Comment;
 import me.mdtalim.botguard.entity.Like;
 import me.mdtalim.botguard.entity.Post;
+import me.mdtalim.botguard.exception.DepthLimitExceededException;
 import me.mdtalim.botguard.exception.DuplicateLikeException;
 import me.mdtalim.botguard.exception.ResourceNotFoundException;
 import me.mdtalim.botguard.repository.BotRepository;
@@ -69,6 +70,12 @@ public class PostService {
                 );
 
             depthLevel = parent.getDepthLevel() + 1;
+        }
+
+        if (depthLevel > 20) {
+            throw new DepthLimitExceededException(
+                "Comment thread cannot exceed 20 levels deep."
+            );
         }
 
         Comment comment = Comment.builder()
