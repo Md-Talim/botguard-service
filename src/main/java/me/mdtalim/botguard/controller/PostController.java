@@ -1,6 +1,7 @@
 package me.mdtalim.botguard.controller;
 
 import jakarta.validation.Valid;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import me.mdtalim.botguard.dto.request.CreateCommentRequest;
 import me.mdtalim.botguard.dto.request.CreatePostRequest;
@@ -8,8 +9,10 @@ import me.mdtalim.botguard.dto.request.LikePostRequest;
 import me.mdtalim.botguard.dto.response.CommentResponse;
 import me.mdtalim.botguard.dto.response.PostResponse;
 import me.mdtalim.botguard.service.PostService;
+import me.mdtalim.botguard.service.ViralityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
 
     private final PostService postService;
+    private final ViralityService viralityService;
 
     @PostMapping
     public ResponseEntity<PostResponse> createPost(
@@ -49,5 +53,15 @@ public class PostController {
     ) {
         postService.likePost(postId, req);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{postId}/virality")
+    public ResponseEntity<Map<String, Object>> getVirality(
+        @PathVariable Long postId
+    ) {
+        Long score = viralityService.getScore(postId);
+        return ResponseEntity.ok(
+            Map.of("postId", postId, "viralityScore", score)
+        );
     }
 }
