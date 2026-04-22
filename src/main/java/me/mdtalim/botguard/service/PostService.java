@@ -32,6 +32,7 @@ public class PostService {
     private final LikeRepository likeRepository;
 
     private final ViralityService viralityService;
+    private final GuardrailService guardrailService;
 
     @Transactional
     public PostResponse createPost(CreatePostRequest req) {
@@ -78,6 +79,10 @@ public class PostService {
             );
         }
 
+        if (req.getAuthorType() == AuthorType.BOT) {
+            guardrailService.checkAndIncrementBotCount(postId);
+        }
+
         Comment comment = Comment.builder()
             .postId(postId)
             .parentCommentId(parentCommentId)
@@ -87,13 +92,13 @@ public class PostService {
             .depthLevel(depthLevel)
             .build();
 
-        comment = commentRepository.save(comment);
+        Comment saved = commentRepository.save(comment);
         switch (req.getAuthorType()) {
             case BOT -> viralityService.onBotReply(postId);
             case USER -> viralityService.onHumanComment(postId);
         }
 
-        return CommentResponse.from(comment);
+        return CommentResponse.from(saved);
     }
 
     @Transactional

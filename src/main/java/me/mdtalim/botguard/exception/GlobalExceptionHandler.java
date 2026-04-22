@@ -26,6 +26,13 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(BotCapExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleBotCap(
+        BotCapExceededException ex
+    ) {
+        return buildError(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+    }
+
     @ExceptionHandler(DepthLimitExceededException.class)
     public ResponseEntity<Map<String, Object>> handleDepth(
         DepthLimitExceededException ex

@@ -7,4 +7,8 @@ public final class RedisKeys {
     public static String viralityScore(Long postId) {
         return "post:" + postId + ":virality_score";
     }
+
+    public static String botCount(Long postId) {
+        return "post:" + postId + ":bot_count";
+    }
 }
