@@ -8,7 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import me.mdtalim.botguard.common.AuthorType;
@@ -17,6 +18,7 @@ import me.mdtalim.botguard.common.AuthorType;
 @Getter
 @Setter
 @Table(name = "comments")
+@Builder
 public class Comment {
 
     @Id
@@ -43,5 +45,5 @@ public class Comment {
     private Integer depthLevel;
 
     @Column(name = "created_at", nullable = false, insertable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 }
