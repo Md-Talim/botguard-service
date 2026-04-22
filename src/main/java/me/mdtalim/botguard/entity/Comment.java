@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import lombok.Builder;
@@ -44,6 +45,11 @@ public class Comment {
     @Column(name = "depth_level", nullable = false)
     private Integer depthLevel;
 
-    @Column(name = "created_at", nullable = false, insertable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = OffsetDateTime.now();
+    }
 }

@@ -15,14 +15,12 @@ public class PostResponse {
     private OffsetDateTime createdAt;
 
     public static PostResponse from(Post post) {
-        PostResponse response = new PostResponse();
-        response.setId(post.getId());
-        response.setAuthorType(post.getAuthorType());
-        response.setAuthorId(post.getAuthorId());
-        response.setContent(post.getContent());
-        response.setCreatedAt(
-            post.getCreatedAt().atOffset(OffsetDateTime.now().getOffset())
-        );
-        return response;
+        PostResponse r = new PostResponse();
+        r.id = post.getId();
+        r.authorType = post.getAuthorType();
+        r.authorId = post.getAuthorId();
+        r.content = post.getContent();
+        r.createdAt = post.getCreatedAt();
+        return r;
     }
 }

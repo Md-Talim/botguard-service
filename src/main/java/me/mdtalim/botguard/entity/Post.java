@@ -7,21 +7,19 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import me.mdtalim.botguard.common.AuthorType;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "posts")
 @Builder
-@AllArgsConstructor
 public class Post {
 
     @Id
@@ -38,7 +36,11 @@ public class Post {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, insertable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = OffsetDateTime.now();
+    }
 }
