@@ -19,6 +19,13 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(DuplicateLikeException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicate(
+        DuplicateLikeException ex
+    ) {
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(
         MethodArgumentNotValidException ex
