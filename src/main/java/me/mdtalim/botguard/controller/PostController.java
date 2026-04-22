@@ -1,0 +1,30 @@
+package me.mdtalim.botguard.controller;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import me.mdtalim.botguard.dto.request.CreatePostRequest;
+import me.mdtalim.botguard.dto.response.PostResponse;
+import me.mdtalim.botguard.service.PostService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/posts")
+@RequiredArgsConstructor
+public class PostController {
+
+    private final PostService postService;
+
+    @PostMapping
+    public ResponseEntity<PostResponse> createPost(
+        @Valid @RequestBody CreatePostRequest req
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            postService.createPost(req)
+        );
+    }
+}
