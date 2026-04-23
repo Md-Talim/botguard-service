@@ -40,6 +40,13 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
 
+    @ExceptionHandler(CooldownActiveException.class)
+    public ResponseEntity<Map<String, Object>> handleCooldown(
+        CooldownActiveException ex
+    ) {
+        return buildError(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(
         MethodArgumentNotValidException ex

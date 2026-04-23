@@ -52,9 +52,11 @@ public class PostService {
         Long postId,
         CreateCommentRequest req
     ) {
-        if (!postRepository.existsById(postId)) {
-            throw new ResourceNotFoundException("Post not found: " + postId);
-        }
+        Post post = postRepository
+            .findById(postId)
+            .orElseThrow(() ->
+                new ResourceNotFoundException("Post not found: " + postId)
+            );
 
         validateAuthorExists(req.getAuthorType(), req.getAuthorId());
 
@@ -79,8 +81,16 @@ public class PostService {
             );
         }
 
+        // Bot-specific guardrails
         if (req.getAuthorType() == AuthorType.BOT) {
             guardrailService.checkAndIncrementBotCount(postId);
+
+            if (post.getAuthorType() == AuthorType.USER) {
+                guardrailService.checkCooldown(
+                    req.getAuthorId(),
+                    post.getAuthorId()
+                );
+            }
         }
 
         Comment comment = Comment.builder()
