@@ -48,15 +48,10 @@ public class PostService {
     }
 
     @Transactional
-    public CommentResponse createComment(
-        Long postId,
-        CreateCommentRequest req
-    ) {
+    public CommentResponse createComment(Long postId, CreateCommentRequest req) {
         Post post = postRepository
             .findById(postId)
-            .orElseThrow(() ->
-                new ResourceNotFoundException("Post not found: " + postId)
-            );
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found: " + postId));
 
         validateAuthorExists(req.getAuthorType(), req.getAuthorId());
 
@@ -66,19 +61,13 @@ public class PostService {
         if (parentCommentId != null) {
             Comment parent = commentRepository
                 .findByIdAndPostId(parentCommentId, postId)
-                .orElseThrow(() ->
-                    new ResourceNotFoundException(
-                        "Parent comment not found: " + parentCommentId
-                    )
-                );
+                .orElseThrow(() -> new ResourceNotFoundException("Parent comment not found: " + parentCommentId));
 
             depthLevel = parent.getDepthLevel() + 1;
         }
 
         if (depthLevel > 20) {
-            throw new DepthLimitExceededException(
-                "Comment thread cannot exceed 20 levels deep."
-            );
+            throw new DepthLimitExceededException("Comment thread cannot exceed 20 levels deep.");
         }
 
         // Bot-specific guardrails
@@ -86,10 +75,7 @@ public class PostService {
             guardrailService.checkAndIncrementBotCount(postId);
 
             if (post.getAuthorType() == AuthorType.USER) {
-                guardrailService.checkCooldown(
-                    req.getAuthorId(),
-                    post.getAuthorId()
-                );
+                guardrailService.checkCooldown(req.getAuthorId(), post.getAuthorId());
             }
         }
 
@@ -117,23 +103,14 @@ public class PostService {
             throw new ResourceNotFoundException("Post not found: " + postId);
         }
         if (!userRepository.existsById(req.getUserId())) {
-            throw new ResourceNotFoundException(
-                "User not found: " + req.getUserId()
-            );
+            throw new ResourceNotFoundException("User not found: " + req.getUserId());
         }
 
-        if (
-            likeRepository
-                .findByPostIdAndUserId(postId, req.getUserId())
-                .isPresent()
-        ) {
+        if (likeRepository.findByPostIdAndUserId(postId, req.getUserId()).isPresent()) {
             throw new DuplicateLikeException("User already liked this post");
         }
 
-        Like like = Like.builder()
-            .postId(postId)
-            .userId(req.getUserId())
-            .build();
+        Like like = Like.builder().postId(postId).userId(req.getUserId()).build();
 
         likeRepository.save(like);
         viralityService.onHumanLike(postId);
@@ -145,9 +122,7 @@ public class PostService {
             case BOT -> botRepository.existsById(authorId);
         };
         if (!exists) {
-            throw new ResourceNotFoundException(
-                type + " not found: " + authorId
-            );
+            throw new ResourceNotFoundException(type + " not found: " + authorId);
         }
     }
 }

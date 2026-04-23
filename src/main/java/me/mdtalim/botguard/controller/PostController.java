@@ -28,12 +28,8 @@ public class PostController {
     private final ViralityService viralityService;
 
     @PostMapping
-    public ResponseEntity<PostResponse> createPost(
-        @Valid @RequestBody CreatePostRequest req
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-            postService.createPost(req)
-        );
+    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody CreatePostRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(req));
     }
 
     @PostMapping("/{postId}/comments")
@@ -41,27 +37,18 @@ public class PostController {
         @PathVariable Long postId,
         @Valid @RequestBody CreateCommentRequest req
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-            postService.createComment(postId, req)
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createComment(postId, req));
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Void> likePost(
-        @PathVariable Long postId,
-        @Valid @RequestBody LikePostRequest req
-    ) {
+    public ResponseEntity<Void> likePost(@PathVariable Long postId, @Valid @RequestBody LikePostRequest req) {
         postService.likePost(postId, req);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{postId}/virality")
-    public ResponseEntity<Map<String, Object>> getVirality(
-        @PathVariable Long postId
-    ) {
+    public ResponseEntity<Map<String, Object>> getVirality(@PathVariable Long postId) {
         Long score = viralityService.getScore(postId);
-        return ResponseEntity.ok(
-            Map.of("postId", postId, "viralityScore", score)
-        );
+        return ResponseEntity.ok(Map.of("postId", postId, "viralityScore", score));
     }
 }

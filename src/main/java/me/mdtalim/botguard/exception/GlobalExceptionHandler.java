@@ -13,44 +13,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(
-        ResourceNotFoundException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
         return buildError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
     @ExceptionHandler(DuplicateLikeException.class)
-    public ResponseEntity<Map<String, Object>> handleDuplicate(
-        DuplicateLikeException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleDuplicate(DuplicateLikeException ex) {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(BotCapExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleBotCap(
-        BotCapExceededException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleBotCap(BotCapExceededException ex) {
         return buildError(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
     }
 
     @ExceptionHandler(DepthLimitExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleDepth(
-        DepthLimitExceededException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleDepth(DepthLimitExceededException ex) {
         return buildError(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
     }
 
     @ExceptionHandler(CooldownActiveException.class)
-    public ResponseEntity<Map<String, Object>> handleCooldown(
-        CooldownActiveException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleCooldown(CooldownActiveException ex) {
         return buildError(HttpStatus.TOO_MANY_REQUESTS, ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(
-        MethodArgumentNotValidException ex
-    ) {
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         String msg = ex
             .getBindingResult()
             .getFieldErrors()
@@ -63,16 +51,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
-        return buildError(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-            "Internal server error"
-        );
+        return buildError(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     }
 
-    private ResponseEntity<Map<String, Object>> buildError(
-        HttpStatus status,
-        String message
-    ) {
+    private ResponseEntity<Map<String, Object>> buildError(HttpStatus status, String message) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", OffsetDateTime.now());
         body.put("status", status.value());

@@ -28,18 +28,13 @@ public class GuardrailService {
         Long newCount = redisTemplate.opsForValue().increment(key);
 
         if (newCount == null) {
-            throw new IllegalStateException(
-                "Redis increment returned null for key: " + postId
-            );
+            throw new IllegalStateException("Redis increment returned null for key: " + postId);
         }
 
         if (newCount > BOT_REPLY_CAP) {
             redisTemplate.opsForValue().decrement(key);
             throw new BotCapExceededException(
-                "Post %d has reached the maximum of %d bot replies.".formatted(
-                    postId,
-                    BOT_REPLY_CAP
-                )
+                "Post %d has reached the maximum of %d bot replies.".formatted(postId, BOT_REPLY_CAP)
             );
         }
     }
@@ -53,16 +48,10 @@ public class GuardrailService {
     public void checkCooldown(Long botId, Long humanAuthorId) {
         String key = RedisKeys.cooldown(botId, humanAuthorId);
 
-        Boolean wasSet = redisTemplate
-            .opsForValue()
-            .setIfAbsent(key, "1", Duration.ofSeconds(COOLDOWN_SECONDS));
+        Boolean wasSet = redisTemplate.opsForValue().setIfAbsent(key, "1", Duration.ofSeconds(COOLDOWN_SECONDS));
 
         if (Boolean.FALSE.equals(wasSet)) {
-            throw new CooldownActiveException(
-                "Bot " +
-                    botId +
-                    " must wait before interacting with this user again."
-            );
+            throw new CooldownActiveException("Bot " + botId + " must wait before interacting with this user again.");
         }
     }
 }

@@ -28,9 +28,7 @@ public class ViralityService {
     }
 
     public long getScore(Long postId) {
-        String val = redisTemplate
-            .opsForValue()
-            .get(RedisKeys.viralityScore(postId));
+        String val = redisTemplate.opsForValue().get(RedisKeys.viralityScore(postId));
         return val == null ? 0L : Long.parseLong(val);
     }
 
