@@ -7,6 +7,7 @@ import me.mdtalim.botguard.dto.request.CreatePostRequest;
 import me.mdtalim.botguard.dto.request.LikePostRequest;
 import me.mdtalim.botguard.dto.response.CommentResponse;
 import me.mdtalim.botguard.dto.response.PostResponse;
+import me.mdtalim.botguard.entity.Bot;
 import me.mdtalim.botguard.entity.Comment;
 import me.mdtalim.botguard.entity.Like;
 import me.mdtalim.botguard.entity.Post;
@@ -33,6 +34,7 @@ public class PostService {
 
     private final ViralityService viralityService;
     private final GuardrailService guardrailService;
+    private final NotificationService notificationService;
 
     @Transactional
     public PostResponse createPost(CreatePostRequest req) {
@@ -92,6 +94,14 @@ public class PostService {
         switch (req.getAuthorType()) {
             case BOT -> viralityService.onBotReply(postId);
             case USER -> viralityService.onHumanComment(postId);
+        }
+
+        if (req.getAuthorType() == AuthorType.BOT && post.getAuthorType() == AuthorType.USER) {
+            Bot bot = botRepository
+                .findById(req.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Bot not found."));
+
+            notificationService.handleBotInteraction(bot.getName(), post.getAuthorId());
         }
 
         return CommentResponse.from(saved);

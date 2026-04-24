@@ -15,4 +15,12 @@ public final class RedisKeys {
     public static String cooldown(Long botId, Long humanId) {
         return "cooldown:bot_" + botId + ":human_" + humanId;
     }
+
+    public static String notifCooldown(Long userId) {
+        return "notif:cooldown:user_" + userId;
+    }
+
+    public static String pendingNotifs(Long userId) {
+        return "user:" + userId + ":pending_notifs";
+    }
 }
