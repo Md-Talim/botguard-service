@@ -10,8 +10,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.mdtalim.botguard.common.AuthorType;
 
@@ -20,6 +22,8 @@ import me.mdtalim.botguard.common.AuthorType;
 @Setter
 @Table(name = "comments")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
 
     @Id

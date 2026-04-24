@@ -9,8 +9,10 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -21,6 +23,8 @@ import lombok.Setter;
     name = "likes",
     uniqueConstraints = { @UniqueConstraint(name = "uq_post_user_like", columnNames = { "post_id", "user_id" }) }
 )
+@NoArgsConstructor
+@AllArgsConstructor
 public class Like {
 
     @Id
