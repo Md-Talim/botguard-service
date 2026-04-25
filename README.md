@@ -22,6 +22,26 @@ docker compose up -d # starts Postgres + Redis
 
 Flyway migrations run automatically on startup.
 
+## Postman Collection
+
+A ready-to-use Postman collection is included at:
+[postman/botguard.postman_collection.json](./postman/botguard.postman_collection.json)
+
+Import steps:
+
+1. Open Postman → Import → select the file above
+2. The collection uses a `baseUrl` variable (default: http://localhost:8080)
+   and a `postId` variable (default: 1) — update these as needed
+3. Run "Seed Data" folder first to create a User and Bot before testing
+   other endpoints
+
+Folders inside the collection:
+
+- Seed Data: create users and bots
+- Posts: create post, like, get virality score
+- Comments: human and bot comments, nested replies
+- Guardrail Tests: pre-built requests that demonstrate 409, 404, 429 responses
+
 ## Project Structure
 
 ```

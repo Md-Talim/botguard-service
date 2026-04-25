@@ -1,0 +1,169 @@
+{
+  "info": {
+    "name": "BotGuard",
+    "_postman_id": "botguard-collection-v1",
+    "description": "API collection for BotGuard — Redis-backed bot guardrail microservice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "postId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Seed Data",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"isPremium\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Bot",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/bots",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"GPT-Bot-1\",\n  \"personaDescription\": \"A helpful AI assistant\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Posts",
+      "item": [
+        {
+          "name": "Create Post (by User)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"USER\",\n  \"authorId\": 1,\n  \"content\": \"Hello world! This is my first post.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Like Post (Human)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/like",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Virality Score",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/posts/{{postId}}/virality"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Add Human Comment (top-level)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/comments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"USER\",\n  \"authorId\": 1,\n  \"content\": \"Great post!\",\n  \"parentCommentId\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Add Bot Comment (top-level)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/comments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"BOT\",\n  \"authorId\": 1,\n  \"content\": \"I am a bot replying!\",\n  \"parentCommentId\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Add Nested Bot Comment (reply)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/comments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"BOT\",\n  \"authorId\": 1,\n  \"content\": \"Nested bot reply\",\n  \"parentCommentId\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Guardrail Tests",
+      "item": [
+        {
+          "name": "Duplicate Like (expect 409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/like",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Bot Cooldown Test (expect 429 on second call)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/{{postId}}/comments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"BOT\",\n  \"authorId\": 1,\n  \"content\": \"Bot trying again too soon\",\n  \"parentCommentId\": null\n}"
+            }
+          }
+        },
+        {
+          "name": "Post Not Found (expect 404)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/posts/99999/comments",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorType\": \"BOT\",\n  \"authorId\": 1,\n  \"content\": \"This post does not exist\",\n  \"parentCommentId\": null\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
